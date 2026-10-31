@@ -1,0 +1,46 @@
+{{ partial "ads/unit.html" (dict "ctx" . "slot" "footer" "class" "ad-footer" "format" "auto") }}
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="/">
+        {{ partial "logo.html" (dict "class" "brand-mark" "size" 32) }}
+        <span class="brand-text">{{ site.Title }}</span>
+      </a>
+      <p class="footer-desc">{{ site.Params.description }}</p>
+      <p class="footer-slogan">“{{ site.Params.slogan }}”</p>
+    </div>
+
+    <div class="footer-col">
+      <h3>Keşfet</h3>
+      <ul>
+        {{- range site.Params.menu }}
+        <li><a href="{{ .url }}">{{ .name }}</a></li>
+        {{- end }}
+        <li><a href="/etiketler/">Etiketler</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>Kategoriler</h3>
+      <ul>
+        {{- range first 8 (site.Taxonomies.kategoriler.ByCount) }}
+        <li><a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span class="muted">({{ .Count }})</span></a></li>
+        {{- end }}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>Kurumsal</h3>
+      <ul>
+        {{- range site.Params.footerMenu }}
+        <li><a href="{{ .url }}">{{ .name }}</a></li>
+        {{- end }}
+        <li><a href="/index.xml" rel="alternate" type="application/rss+xml">RSS</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© {{ now.Year }} {{ site.Title }}. Tüm hakları saklıdır.</p>
+    <p class="muted">Bu sitedeki içerikler genel bilgilendirme amaçlıdır; profesyonel danışmanlık yerine geçmez.</p>
+  </div>
+</footer>

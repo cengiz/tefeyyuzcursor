@@ -1,0 +1,18 @@
+{{- $js := resources.Get "js/main.js" | resources.Minify | resources.Fingerprint -}}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- if eq .Layout "arama" }}
+  {{- $search := resources.Get "js/search.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}" defer></script>
+{{- end }}
+{{- if and .IsPage (ne .Params.reklam false) site.Params.adsense.enabled site.Params.adsense.client (or (eq .Section "ansiklopedi") (eq .Section "sorular")) }}
+<script>
+  // İçerik içi reklam: 3. paragraftan sonra bir reklam birimi ekler (uzun yazılarda).
+  document.addEventListener('DOMContentLoaded',function(){
+    var body=document.querySelector('.prose[data-inarticle-ad]');if(!body)return;
+    var ps=body.querySelectorAll(':scope > p');if(ps.length<6)return;
+    var tpl=document.getElementById('inarticle-ad-tpl');if(!tpl)return;
+    var node=tpl.content.cloneNode(true);ps[2].after(node);
+    {{- if not hugo.IsServer }}(adsbygoogle=window.adsbygoogle||[]).push({});{{- end }}
+  });
+</script>
+{{- end }}

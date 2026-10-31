@@ -1,0 +1,98 @@
+{{ define "bodyclass" }}page-single page-soru{{ end }}
+{{ define "main" }}
+<div class="container">
+  {{ partial "breadcrumbs.html" . }}
+  <div class="layout-with-sidebar">
+    <article class="layout-main qa">
+      <header class="qa-head">
+        <div class="article-cats">
+          <span class="badge badge--soru">Soru</span>
+          {{- range .GetTerms "kategoriler" }}<a class="chip" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+        </div>
+        <h1 class="qa-title">{{ .Title }}</h1>
+        {{- with .Params.soruMetni }}<p class="qa-text">{{ . }}</p>{{ end }}
+        <div class="article-meta">
+          <span>Soran: <strong>{{ .Params.soran | default "Tefeyyüz Okuru" }}</strong></span>
+          <span class="dot">·</span>
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format site.Params.dateFormat }}</time>
+          <span class="dot">·</span>
+          <span>{{ .ReadingTime }} dk okuma</span>
+        </div>
+      </header>
+
+      {{ partial "ads/unit.html" (dict "ctx" . "slot" "header" "class" "ad-leaderboard" "format" "horizontal") }}
+
+      {{- with .Params.kisaCevap }}
+      <aside class="infobox infobox--cevap">
+        <strong>Kısa cevap</strong>
+        <p>{{ . }}</p>
+      </aside>
+      {{- end }}
+
+      <section id="cevap" class="answer">
+        <div class="answer-head">
+          <div class="avatar" aria-hidden="true">{{ partial "logo.html" (dict "size" 40) }}</div>
+          <div>
+            <strong>{{ .Params.author | default site.Params.author }}</strong>
+            <span class="muted">· Kabul edilen cevap</span>
+          </div>
+          {{- with .Params.oy }}<span class="votes" title="Faydalı bulanlar">▲ {{ . }}</span>{{ end }}
+        </div>
+        <div class="prose" data-inarticle-ad>
+          {{ .Content }}
+        </div>
+        {{ partial "ads/inarticle-template.html" . }}
+      </section>
+
+      {{- with .Params.sss }}
+      <section class="faq" aria-labelledby="sss-baslik">
+        <h2 id="sss-baslik">Sık Sorulan Sorular</h2>
+        {{- range . }}
+        <details class="faq-item">
+          <summary>{{ .soru }}</summary>
+          <div class="prose">{{ .cevap | markdownify }}</div>
+        </details>
+        {{- end }}
+      </section>
+      {{- end }}
+
+      {{- with .Params.kaynaklar }}
+      <section class="sources">
+        <h2>Kaynaklar</h2>
+        <ol>{{ range . }}<li>{{ . | markdownify }}</li>{{ end }}</ol>
+      </section>
+      {{- end }}
+
+      <footer class="article-foot">
+        {{- with .GetTerms "etiketler" }}
+        <div class="tags">
+          <span class="tags-label">Etiketler:</span>
+          {{- range . }}<a class="chip chip--tag" href="{{ .RelPermalink }}" rel="tag">{{ .Title }}</a>{{ end }}
+        </div>
+        {{- end }}
+        {{ partial "share.html" . }}
+        <div class="helpful" data-helpful>
+          <span>Bu cevap faydalı oldu mu?</span>
+          <button type="button" class="btn btn-ghost btn-sm" data-vote="yes">👍 Evet</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-vote="no">👎 Hayır</button>
+          <span class="helpful-thanks" hidden>Teşekkürler!</span>
+        </div>
+      </footer>
+
+      <div class="cta-box cta-box--sm">
+        <div>
+          <h2>Senin de bir sorun mu var?</h2>
+          <p>Merak ettiğin konuyu bize gönder; editörlerimiz araştırıp kaynaklı bir cevap yayınlasın.</p>
+        </div>
+        <a class="btn btn-primary" href="/soru-sor/">Soru Sor</a>
+      </div>
+
+      {{ partial "ads/unit.html" (dict "ctx" . "slot" "footer" "class" "ad-leaderboard" "format" "auto") }}
+      {{ partial "related.html" . }}
+      {{ partial "comments.html" . }}
+    </article>
+
+    {{ partial "sidebar.html" . }}
+  </div>
+</div>
+{{ end }}

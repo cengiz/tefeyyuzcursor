@@ -1,0 +1,129 @@
+{{- /* ---------- Başlık ve açıklama ---------- */ -}}
+{{- $title := site.Title -}}
+{{- if .IsHome -}}
+  {{- $title = printf "%s – %s" site.Title site.Params.slogan -}}
+{{- else if .Params.seoTitle -}}
+  {{- $title = printf "%s – %s" .Params.seoTitle site.Title -}}
+{{- else if eq .Kind "term" -}}
+  {{- $title = printf "%s %s – %s" .Title (cond (eq .Data.Plural "kategoriler") "Kategorisi" "Etiketi") site.Title -}}
+{{- else if and (in (slice "section" "taxonomy" "term") .Kind) .Paginator -}}
+  {{- if gt .Paginator.PageNumber 1 -}}
+    {{- $title = printf "%s – Sayfa %d – %s" .Title .Paginator.PageNumber site.Title -}}
+  {{- else -}}
+    {{- $title = printf "%s – %s" .Title site.Title -}}
+  {{- end -}}
+{{- else -}}
+  {{- $title = printf "%s – %s" .Title site.Title -}}
+{{- end -}}
+
+{{- $desc := site.Params.description -}}
+{{- if .Params.description -}}
+  {{- $desc = .Params.description -}}
+{{- else if .Params.kisaCevap -}}
+  {{- $desc = .Params.kisaCevap -}}
+{{- else if and (not .IsHome) .Summary -}}
+  {{- $desc = .Summary | plainify -}}
+{{- end -}}
+{{- $desc = $desc | plainify | htmlUnescape | truncate 160 "…" -}}
+
+{{- /* ---------- Görsel ---------- */ -}}
+{{- $image := site.Params.defaultImage | absURL -}}
+{{- with .Params.image -}}{{- $image = . | absURL -}}{{- end -}}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $desc }}">
+{{- with .Params.keywords }}
+<meta name="keywords" content="{{ delimit . ", " }}">
+{{- end }}
+<meta name="author" content="{{ .Params.author | default site.Params.author }}">
+<meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<script>(function(){try{var t=localStorage.getItem('tfz-tema');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark')}catch(e){}})();</script>
+
+{{- /* ---------- Canonical / robots ---------- */ -}}
+<link rel="canonical" href="{{ .Permalink }}">
+{{- if or .Params.noindex (eq .Layout "arama") }}
+<meta name="robots" content="noindex, follow">
+{{- else }}
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+{{- end }}
+{{- if in (slice "section" "taxonomy" "term") .Kind }}
+{{- with .Paginator }}
+  {{- if .HasPrev }}
+<link rel="prev" href="{{ .Prev.URL | absURL }}">
+  {{- end }}
+  {{- if .HasNext }}
+<link rel="next" href="{{ .Next.URL | absURL }}">
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- /* ---------- Doğrulama ---------- */ -}}
+{{- with site.Params.verification.google }}
+<meta name="google-site-verification" content="{{ . }}">
+{{- end }}
+{{- with site.Params.verification.bing }}
+<meta name="msvalidate.01" content="{{ . }}">
+{{- end }}
+{{- with site.Params.verification.yandex }}
+<meta name="yandex-verification" content="{{ . }}">
+{{- end }}
+
+{{- /* ---------- Open Graph / Twitter ---------- */ -}}
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ $image }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+{{- if .IsPage }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+  {{- range .Params.etiketler }}
+<meta property="article:tag" content="{{ . }}">
+  {{- end }}
+  {{- with .Params.kategoriler }}
+<meta property="article:section" content="{{ index . 0 }}">
+  {{- end }}
+{{- end }}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+<meta name="twitter:image" content="{{ $image }}">
+{{- with site.Params.twitter }}
+<meta name="twitter:site" content="@{{ . }}">
+{{- end }}
+
+{{- /* ---------- RSS / favicon ---------- */ -}}
+{{- with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" title="{{ $title }}" href="{{ .Permalink }}">
+{{- end }}
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+
+{{- /* ---------- CSS ---------- */ -}}
+{{- $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+
+{{- /* ---------- Yapısal veri ---------- */ -}}
+{{ partial "seo/jsonld.html" . }}
+
+{{- /* ---------- AdSense ---------- */ -}}
+{{- if and site.Params.adsense.enabled site.Params.adsense.client (not hugo.IsServer) }}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ site.Params.adsense.client }}" crossorigin="anonymous"></script>
+{{- end }}
+
+{{- /* ---------- Google Analytics ---------- */ -}}
+{{- with site.Params.analytics.googleTagId }}
+  {{- if not hugo.IsServer }}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','{{ . }}',{anonymize_ip:true});</script>
+  {{- end }}
+{{- end }}

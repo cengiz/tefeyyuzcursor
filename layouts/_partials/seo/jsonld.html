@@ -1,0 +1,105 @@
+{{- $image := site.Params.defaultImage | absURL -}}
+{{- with .Params.image }}{{ $image = . | absURL }}{{ end -}}
+{{- $org := dict
+  "@type" "Organization"
+  "name" site.Title
+  "url" site.BaseURL
+  "logo" (dict "@type" "ImageObject" "url" (absURL "/images/logo-512.png"))
+-}}
+{{- $graph := slice -}}
+
+{{- /* WebSite + arama kutusu */ -}}
+{{- if .IsHome -}}
+  {{- $graph = $graph | append (dict
+      "@type" "WebSite"
+      "@id" (printf "%s#website" site.BaseURL)
+      "url" site.BaseURL
+      "name" site.Title
+      "description" site.Params.description
+      "inLanguage" "tr-TR"
+      "publisher" $org
+      "potentialAction" (dict
+        "@type" "SearchAction"
+        "target" (dict "@type" "EntryPoint" "urlTemplate" (printf "%sara/?q={search_term_string}" site.BaseURL))
+        "query-input" "required name=search_term_string")) -}}
+  {{- $graph = $graph | append (merge $org (dict "@id" (printf "%s#organization" site.BaseURL))) -}}
+{{- end -}}
+
+{{- /* Breadcrumb */ -}}
+{{- if not .IsHome -}}
+  {{- $items := slice (dict "@type" "ListItem" "position" 1 "name" "Ana Sayfa" "item" site.BaseURL) -}}
+  {{- $pos := 2 -}}
+  {{- range .Ancestors.Reverse -}}
+    {{- if not .IsHome -}}
+      {{- $items = $items | append (dict "@type" "ListItem" "position" $pos "name" .Title "item" .Permalink) -}}
+      {{- $pos = add $pos 1 -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $items = $items | append (dict "@type" "ListItem" "position" $pos "name" .Title "item" .Permalink) -}}
+  {{- $graph = $graph | append (dict "@type" "BreadcrumbList" "itemListElement" $items) -}}
+{{- end -}}
+
+{{- /* Ansiklopedi maddesi */ -}}
+{{- if and .IsPage (eq .Section "ansiklopedi") -}}
+  {{- $graph = $graph | append (dict
+      "@type" "Article"
+      "@id" (printf "%s#article" .Permalink)
+      "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+      "headline" (.Title | truncate 110 "")
+      "description" (or .Params.description (.Summary | plainify) | plainify | htmlUnescape | truncate 200 "…")
+      "image" (slice $image)
+      "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+      "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+      "inLanguage" "tr-TR"
+      "wordCount" .WordCount
+      "keywords" (delimit (.Params.etiketler | default slice) ", ")
+      "articleSection" (index (.Params.kategoriler | default (slice "")) 0)
+      "author" (dict "@type" "Organization" "name" (.Params.author | default site.Params.author) "url" site.BaseURL)
+      "publisher" $org) -}}
+{{- end -}}
+
+{{- /* Soru-Cevap sayfası */ -}}
+{{- if and .IsPage (eq .Section "sorular") -}}
+  {{- $answerText := .Plain | truncate 1500 "…" -}}
+  {{- $graph = $graph | append (dict
+      "@type" "QAPage"
+      "@id" (printf "%s#qapage" .Permalink)
+      "inLanguage" "tr-TR"
+      "mainEntity" (dict
+        "@type" "Question"
+        "name" .Title
+        "text" (or .Params.soruMetni .Title)
+        "answerCount" 1
+        "dateCreated" (.Date.Format "2006-01-02T15:04:05Z07:00")
+        "author" (dict "@type" "Person" "name" (.Params.soran | default "Tefeyyüz Okuru"))
+        "acceptedAnswer" (dict
+          "@type" "Answer"
+          "text" $answerText
+          "url" (printf "%s#cevap" .Permalink)
+          "dateCreated" (.Date.Format "2006-01-02T15:04:05Z07:00")
+          "upvoteCount" (.Params.oy | default 0)
+          "author" (dict "@type" "Organization" "name" (.Params.author | default site.Params.author))))) -}}
+{{- end -}}
+
+{{- /* SSS (sayfa içinde sss listesi varsa) */ -}}
+{{- with .Params.sss -}}
+  {{- $faq := slice -}}
+  {{- range . -}}
+    {{- $faq = $faq | append (dict "@type" "Question" "name" .soru "acceptedAnswer" (dict "@type" "Answer" "text" .cevap)) -}}
+  {{- end -}}
+  {{- $graph = $graph | append (dict "@type" "FAQPage" "mainEntity" $faq) -}}
+{{- end -}}
+
+{{- /* Koleksiyon sayfaları */ -}}
+{{- if or (eq .Kind "section") (eq .Kind "term") (eq .Kind "taxonomy") -}}
+  {{- $graph = $graph | append (dict
+      "@type" "CollectionPage"
+      "@id" .Permalink
+      "name" .Title
+      "description" (or .Params.description .Description site.Params.description)
+      "url" .Permalink
+      "inLanguage" "tr-TR"
+      "isPartOf" (dict "@id" (printf "%s#website" site.BaseURL))) -}}
+{{- end -}}
+
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" $graph | jsonify (dict "noHTMLEscape" true) | safeJS }}</script>

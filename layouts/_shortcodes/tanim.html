@@ -1,0 +1,9 @@
+{{- /* Sözlük tanımı kutusu: {{< tanim kelime="Tefeyyüz" koken="Arapça" okunus="te-fey-yüz" >}} tanım metni {{< /tanim >}} */ -}}
+<div class="definition">
+  <div class="definition-head">
+    <span class="definition-word">{{ .Get "kelime" }}</span>
+    {{- with .Get "okunus" }}<span class="definition-pron">/{{ . }}/</span>{{ end }}
+    {{- with .Get "koken" }}<span class="chip chip--sm">{{ . }}</span>{{ end }}
+  </div>
+  <div class="definition-body">{{ .Inner | markdownify }}</div>
+</div>

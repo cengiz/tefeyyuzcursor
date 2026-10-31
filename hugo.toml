@@ -1,0 +1,171 @@
+baseURL = "https://tefeyyuz.com/"
+locale = "tr-TR"
+defaultContentLanguage = "tr"
+title = "Tefeyyüz"
+timeZone = "Europe/Istanbul"
+enableRobotsTXT = true
+enableEmoji = true
+summaryLength = 40
+removePathAccents = true
+capitalizeListTitles = false   # etiket/kategori adları front matter'da yazıldığı gibi görünsün ("için" -> "Için" hatasını önler)
+
+[pagination]
+  pagerSize = 12
+  path = "sayfa"
+
+[taxonomies]
+  kategori = "kategoriler"
+  etiket = "etiketler"
+
+[permalinks]
+  [permalinks.page]
+    ansiklopedi = "/ansiklopedi/:slug/"
+    sorular = "/soru/:slug/"
+  [permalinks.term]
+    kategoriler = "/kategori/:slug/"
+    etiketler = "/etiket/:slug/"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+        title = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+    ordered = false
+  [markup.highlight]
+    noClasses = false
+    style = "github"
+
+[outputs]
+  home = ["HTML", "RSS", "SearchIndex", "AdsTxt"]
+  section = ["HTML", "RSS"]
+  term = ["HTML", "RSS"]
+
+[outputFormats]
+  [outputFormats.SearchIndex]
+    mediaType = "application/json"
+    baseName = "arama-indeksi"
+    isPlainText = true
+    notAlternative = true
+  [outputFormats.AdsTxt]
+    mediaType = "text/plain"
+    baseName = "ads"
+    isPlainText = true
+    notAlternative = true
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+  filename = "sitemap.xml"
+
+[services]
+  [services.rss]
+    limit = 50
+
+[minify]
+  [minify.tdewolff]
+    [minify.tdewolff.html]
+      keepComments = false
+
+[related]
+  includeNewer = true
+  threshold = 60
+  toLower = true
+  [[related.indices]]
+    name = "etiketler"
+    weight = 100
+  [[related.indices]]
+    name = "kategoriler"
+    weight = 60
+  [[related.indices]]
+    name = "title"
+    weight = 20
+
+[params]
+  description = "Tefeyyüz; tarih, bilim, dil, felsefe ve kültür üzerine özenle hazırlanmış ansiklopedi maddeleri ve merak edilen soruların güvenilir cevaplarını bir araya getiren Türkçe bilgi bankasıdır."
+  slogan = "Bilgiyle yüksel."
+  author = "Tefeyyüz Editörleri"
+  email = "iletisim@tefeyyuz.com"
+  twitter = ""           # örn: "tefeyyuz"
+  defaultImage = "/images/og-default.png"
+  logoText = "Tefeyyüz"
+  dateFormat = "2 January 2006"
+  anaSayfaOneCikanSayisi = 4
+  anaSayfaMakaleSayisi = 8
+  anaSayfaSoruSayisi = 8
+
+  # Google AdSense
+  [params.adsense]
+    enabled = false          # Onay geldikten sonra true yapın
+    client = "ca-pub-XXXXXXXXXXXXXXXX"
+    # ads.txt satırları (AdSense panelinden kopyalayın)
+    adsTxt = ["google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0"]
+    # Reklam birimi slot ID'leri (boş bırakılırsa otomatik reklam formatı kullanılır)
+    [params.adsense.slots]
+      header = ""
+      sidebar = ""
+      inArticle = ""
+      inFeed = ""
+      footer = ""
+    autoAds = true           # Otomatik reklamlar
+
+  # Google Analytics 4 (boş bırakılırsa yüklenmez)
+  [params.analytics]
+    googleTagId = ""         # örn: "G-XXXXXXXXXX"
+
+  # Google Search Console doğrulama etiketi (boş bırakılırsa eklenmez)
+  [params.verification]
+    google = ""
+    bing = ""
+    yandex = ""
+
+  # Soru gönderme formu (Formspree / Netlify Forms / Getform)
+  [params.form]
+    provider = "formspree"   # "formspree" | "netlify"
+    endpoint = ""            # formspree için: https://formspree.io/f/xxxxxxxx
+
+  # Yorumlar (Giscus - GitHub Discussions) — boş bırakılırsa kapalı
+  [params.giscus]
+    repo = ""
+    repoId = ""
+    category = ""
+    categoryId = ""
+
+  # Üst menü
+  [[params.menu]]
+    name = "Ansiklopedi"
+    url = "/ansiklopedi/"
+  [[params.menu]]
+    name = "Sorular"
+    url = "/sorular/"
+  [[params.menu]]
+    name = "Kategoriler"
+    url = "/kategoriler/"
+  [[params.menu]]
+    name = "Soru Sor"
+    url = "/soru-sor/"
+
+  [[params.footerMenu]]
+    name = "Hakkında"
+    url = "/hakkinda/"
+  [[params.footerMenu]]
+    name = "İletişim"
+    url = "/iletisim/"
+  [[params.footerMenu]]
+    name = "Gizlilik Politikası"
+    url = "/gizlilik-politikasi/"
+  [[params.footerMenu]]
+    name = "Kullanım Şartları"
+    url = "/kullanim-sartlari/"
+  [[params.footerMenu]]
+    name = "Çerez Politikası"
+    url = "/cerez-politikasi/"
+
+[privacy]
+  [privacy.youtube]
+    privacyEnhanced = true

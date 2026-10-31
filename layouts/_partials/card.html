@@ -1,0 +1,36 @@
+{{- /* Liste kartı. Kullanım: {{ partial "card.html" . }} veya (dict "page" . "compact" true) */ -}}
+{{- $p := . -}}
+{{- $compact := false -}}
+{{- $featured := false -}}
+{{- if reflect.IsMap . }}{{ $p = .page }}{{ $compact = .compact | default false }}{{ $featured = .featured | default false }}{{ end -}}
+{{- $isSoru := eq $p.Section "sorular" -}}
+<article class="card {{ if $compact }}card--compact{{ end }} {{ if $featured }}card--featured{{ end }} {{ if $isSoru }}card--soru{{ end }}">
+  {{- if and (not $compact) $p.Params.image }}
+  <a class="card-media" href="{{ $p.RelPermalink }}" tabindex="-1" aria-hidden="true">
+    <img src="{{ $p.Params.image }}" alt="" loading="lazy" decoding="async" width="640" height="360">
+  </a>
+  {{- end }}
+  <div class="card-body">
+    <div class="card-meta">
+      <span class="badge {{ if $isSoru }}badge--soru{{ else }}badge--makale{{ end }}">{{ if $isSoru }}Soru{{ else }}Madde{{ end }}</span>
+      {{- with $p.GetTerms "kategoriler" }}
+        {{- with index . 0 }}
+      <a class="card-cat" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{- end }}
+      {{- end }}
+    </div>
+    <h3 class="card-title"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+    {{- if not $compact }}
+    <p class="card-excerpt">{{ or $p.Params.kisaCevap $p.Params.description ($p.Summary | plainify) | plainify | htmlUnescape | truncate (cond $featured 420 150) "…" }}</p>
+    {{- if $featured }}
+    <p class="card-excerpt card-excerpt--more">{{ $p.Plain | htmlUnescape | truncate 360 "…" }}</p>
+    <a class="card-readmore" href="{{ $p.RelPermalink }}">Devamını oku →</a>
+    {{- end }}
+    {{- end }}
+    <div class="card-foot">
+      <time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date | time.Format site.Params.dateFormat }}</time>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>{{ $p.ReadingTime }} dk okuma</span>
+    </div>
+  </div>
+</article>

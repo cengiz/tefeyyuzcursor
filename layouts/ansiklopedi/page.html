@@ -1,0 +1,96 @@
+{{ define "bodyclass" }}page-single page-makale{{ end }}
+{{ define "main" }}
+<div class="container">
+  {{ partial "breadcrumbs.html" . }}
+  <div class="layout-with-sidebar">
+    <article class="layout-main article" itemscope itemtype="https://schema.org/Article">
+      <header class="article-head">
+        <div class="article-cats">
+          {{- range .GetTerms "kategoriler" }}<a class="chip" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+        </div>
+        <h1 class="article-title" itemprop="headline">{{ .Title }}</h1>
+        {{- with .Params.description }}<p class="article-lead" itemprop="description">{{ . }}</p>{{ end }}
+        <div class="article-meta">
+          <span>✍️ {{ .Params.author | default site.Params.author }}</span>
+          <span class="dot">·</span>
+          <time datetime="{{ .Date.Format "2006-01-02" }}" itemprop="datePublished">{{ .Date | time.Format site.Params.dateFormat }}</time>
+          {{- if ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02") }}
+          <span class="dot">·</span>
+          <span>Güncelleme: <time datetime="{{ .Lastmod.Format "2006-01-02" }}" itemprop="dateModified">{{ .Lastmod | time.Format site.Params.dateFormat }}</time></span>
+          {{- end }}
+          <span class="dot">·</span>
+          <span>{{ .ReadingTime }} dk okuma</span>
+        </div>
+      </header>
+
+      {{- with .Params.image }}
+      <figure class="article-figure">
+        <img src="{{ . }}" alt="{{ $.Params.imageAlt | default $.Title }}" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async">
+        {{- with $.Params.imageCaption }}<figcaption>{{ . }}</figcaption>{{ end }}
+      </figure>
+      {{- end }}
+
+      {{ partial "ads/unit.html" (dict "ctx" . "slot" "header" "class" "ad-leaderboard" "format" "horizontal") }}
+
+      {{- with .Params.ozet }}
+      <aside class="infobox infobox--ozet">
+        <strong>Kısaca</strong>
+        <p>{{ . }}</p>
+      </aside>
+      {{- end }}
+
+      {{- with .TableOfContents }}
+        {{- if gt (len .) 60 }}
+      <details class="toc-mobile">
+        <summary>İçindekiler</summary>
+        {{ . }}
+      </details>
+        {{- end }}
+      {{- end }}
+
+      <div class="prose" data-inarticle-ad itemprop="articleBody">
+        {{ .Content }}
+      </div>
+
+      {{ partial "ads/inarticle-template.html" . }}
+
+      {{- with .Params.kaynaklar }}
+      <section class="sources">
+        <h2>Kaynaklar</h2>
+        <ol>
+          {{- range . }}
+          <li>{{ . | markdownify }}</li>
+          {{- end }}
+        </ol>
+      </section>
+      {{- end }}
+
+      <footer class="article-foot">
+        {{- with .GetTerms "etiketler" }}
+        <div class="tags">
+          <span class="tags-label">Etiketler:</span>
+          {{- range . }}<a class="chip chip--tag" href="{{ .RelPermalink }}" rel="tag">{{ .Title }}</a>{{ end }}
+        </div>
+        {{- end }}
+        {{ partial "share.html" . }}
+        <p class="cite">
+          <strong>Alıntılama:</strong>
+          <code>{{ site.Title }} ({{ .Lastmod.Format "2006" }}). “{{ .Title }}”. {{ .Permalink }} (Erişim: {{ now | time.Format "2 January 2006" }})</code>
+        </p>
+      </footer>
+
+      {{ partial "ads/unit.html" (dict "ctx" . "slot" "footer" "class" "ad-leaderboard" "format" "auto") }}
+
+      <nav class="prev-next" aria-label="Önceki / sonraki madde">
+        {{- with .PrevInSection }}<a class="pn pn-prev" href="{{ .RelPermalink }}"><small>← Önceki</small><span>{{ .Title }}</span></a>{{ end }}
+        {{- with .NextInSection }}<a class="pn pn-next" href="{{ .RelPermalink }}"><small>Sonraki →</small><span>{{ .Title }}</span></a>{{ end }}
+      </nav>
+
+      {{ partial "related.html" . }}
+      {{ partial "comments.html" . }}
+    </article>
+
+    {{ partial "sidebar.html" . }}
+  </div>
+</div>
+{{ end }}

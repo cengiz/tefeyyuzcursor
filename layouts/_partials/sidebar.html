@@ -1,0 +1,51 @@
+<aside class="sidebar">
+  {{- $showToc := and .IsPage (gt .WordCount 400) }}
+  {{- if isset .Params "toc" }}{{ $showToc = .Params.toc }}{{ end }}
+  {{- if $showToc }}
+    {{- with .TableOfContents }}
+      {{- if gt (len .) 60 }}
+  <div class="widget widget-toc" id="icindekiler">
+    <h2 class="widget-title">İçindekiler</h2>
+    {{ . }}
+  </div>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{ partial "ads/unit.html" (dict "ctx" . "slot" "sidebar" "class" "ad-sidebar" "format" "rectangle") }}
+
+  {{- $popular := where site.RegularPages "Params.oneCikan" true | first 5 }}
+  {{- if $popular }}
+  <div class="widget">
+    <h2 class="widget-title">Öne Çıkanlar</h2>
+    <ol class="mini-list">
+      {{- range $popular }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ol>
+  </div>
+  {{- end }}
+
+  <div class="widget">
+    <h2 class="widget-title">Son Sorular</h2>
+    <ul class="mini-list">
+      {{- range first 5 (where site.RegularPages "Section" "sorular") }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+    <a class="widget-more" href="/soru-sor/">Sen de soru sor →</a>
+  </div>
+
+  <div class="widget">
+    <h2 class="widget-title">Kategoriler</h2>
+    <ul class="chip-list">
+      {{- range site.Taxonomies.kategoriler.ByCount }}
+      <li><a class="chip" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <small>{{ .Count }}</small></a></li>
+      {{- end }}
+    </ul>
+  </div>
+
+  <div class="widget widget-sticky">
+    {{ partial "ads/unit.html" (dict "ctx" . "slot" "sidebar" "class" "ad-sidebar ad-sidebar--sticky" "format" "auto") }}
+  </div>
+</aside>

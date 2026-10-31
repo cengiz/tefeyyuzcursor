@@ -1,0 +1,99 @@
+{{ define "bodyclass" }}page-home{{ end }}
+{{ define "main" }}
+{{- $makaleler := where site.RegularPages "Section" "ansiklopedi" -}}
+{{- $sorular := where site.RegularPages "Section" "sorular" -}}
+{{- $oneCikan := where site.RegularPages "Params.oneCikan" true | first (site.Params.anaSayfaOneCikanSayisi | default 4) -}}
+
+<section class="hero">
+  <div class="container hero-inner">
+    <p class="hero-kicker">Türkçe bilgi bankası</p>
+    <h1>{{ site.Params.slogan }}</h1>
+    <p class="hero-lead">{{ site.Params.description }}</p>
+    <form class="hero-search" role="search" action="/ara/" method="get">
+      <label class="visually-hidden" for="hero-q">Ne öğrenmek istiyorsun?</label>
+      <input id="hero-q" type="search" name="q" placeholder="Ne öğrenmek istiyorsun? Örn. Tefeyyüz ne demek?" autocomplete="off" required>
+      <button type="submit" class="btn btn-primary">Ara</button>
+    </form>
+    <ul class="hero-stats" aria-label="Site istatistikleri">
+      <li><strong>{{ len $makaleler }}</strong> ansiklopedi maddesi</li>
+      <li><strong>{{ len $sorular }}</strong> cevaplanmış soru</li>
+      <li><strong>{{ len site.Taxonomies.kategoriler }}</strong> kategori</li>
+    </ul>
+  </div>
+</section>
+
+<div class="container">
+  {{ partial "ads/unit.html" (dict "ctx" . "slot" "header" "class" "ad-leaderboard" "format" "horizontal") }}
+</div>
+
+{{- with $oneCikan }}
+<section class="container section">
+  <div class="section-head">
+    <h2 class="section-title">Öne Çıkanlar</h2>
+  </div>
+  <div class="grid grid-featured">
+    {{- range $i, $p := . }}
+    {{ partial "card.html" (dict "page" $p "compact" (ne $i 0) "featured" (eq $i 0)) }}
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+
+<section class="container section section-split">
+  <div class="split-main">
+    <div class="section-head">
+      <h2 class="section-title">Son Eklenen Maddeler</h2>
+      <a class="section-more" href="/ansiklopedi/">Tümünü gör →</a>
+    </div>
+    <div class="grid grid-2">
+      {{- range first (site.Params.anaSayfaMakaleSayisi | default 8) $makaleler }}
+      {{ partial "card.html" . }}
+      {{- end }}
+    </div>
+  </div>
+  <aside class="split-side">
+    <div class="section-head">
+      <h2 class="section-title">Son Sorular</h2>
+      <a class="section-more" href="/sorular/">Tümü →</a>
+    </div>
+    <ul class="qa-list">
+      {{- range first (site.Params.anaSayfaSoruSayisi | default 8) $sorular }}
+      <li class="qa-item">
+        <a href="{{ .RelPermalink }}">
+          <span class="qa-q">{{ .Title }}</span>
+          <span class="qa-a">{{ or .Params.kisaCevap (.Summary | plainify) | plainify | htmlUnescape | truncate 110 "…" }}</span>
+        </a>
+      </li>
+      {{- end }}
+    </ul>
+    <a class="btn btn-outline btn-block" href="/soru-sor/">Sen de soru sor</a>
+    {{ partial "ads/unit.html" (dict "ctx" . "slot" "sidebar" "class" "ad-sidebar" "format" "rectangle") }}
+  </aside>
+</section>
+
+<section class="container section">
+  <div class="section-head">
+    <h2 class="section-title">Kategoriler</h2>
+    <a class="section-more" href="/kategoriler/">Tümü →</a>
+  </div>
+  <div class="grid grid-cats">
+    {{- range site.Taxonomies.kategoriler.ByCount }}
+    <a class="cat-card" href="{{ .Page.RelPermalink }}">
+      <span class="cat-icon" aria-hidden="true">{{ .Page.Params.ikon | default "📚" }}</span>
+      <span class="cat-name">{{ .Page.Title }}</span>
+      <span class="cat-count">{{ .Count }} içerik</span>
+    </a>
+    {{- end }}
+  </div>
+</section>
+
+<section class="container section">
+  <div class="cta-box">
+    <div>
+      <h2>Tefeyyüz nedir?</h2>
+      <p>Arapça <em>feyz</em> kökünden gelen <strong>tefeyyüz</strong>; bilgi ve irfandan nasiplenmek, feyiz alarak yükselmek demektir. Biz de bu adı, öğrenerek yükselen bir topluluğun bilgi bankası olmak için seçtik.</p>
+    </div>
+    <a class="btn btn-primary" href="/hakkinda/">Hakkımızda</a>
+  </div>
+</section>
+{{ end }}

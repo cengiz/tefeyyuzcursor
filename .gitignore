@@ -1,0 +1,19 @@
+# Hugo leftovers
+/resources/_gen/
+.hugo_build.lock
+hugo_stats.json
+
+# PHP
+/storage/database/*.sqlite
+/storage/database/*.sqlite-wal
+/storage/database/*.sqlite-shm
+/storage/logs/*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node (ileride eklenirse)
+node_modules/

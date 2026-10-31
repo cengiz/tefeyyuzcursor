@@ -1,0 +1,26 @@
+.admin-body { min-height: 100vh; background: var(--bg, #f6f7f9); }
+.admin-header {
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
+  padding: .9rem 1.25rem; border-bottom: 1px solid var(--border, #d7ddd9);
+  background: var(--surface, #fff);
+}
+.admin-header .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
+.admin-header nav { display: flex; flex-wrap: wrap; gap: .75rem; }
+.admin-header nav a { color: inherit; text-decoration: none; font-size: .95rem; }
+.admin-header nav a:hover { color: var(--accent, #0f766e); }
+.admin-main { padding: 1.5rem 0 3rem; }
+.admin-login { max-width: 28rem; margin: 3rem auto; }
+.admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+.admin-stat {
+  display: flex; flex-direction: column; gap: .25rem; padding: 1rem 1.1rem;
+  background: var(--surface, #fff); border: 1px solid var(--border, #d7ddd9); border-radius: 12px;
+  text-decoration: none; color: inherit;
+}
+.admin-stat strong { font-size: 1.8rem; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.admin-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.admin-table { width: 100%; border-collapse: collapse; background: var(--surface, #fff); }
+.admin-table th, .admin-table td { text-align: left; padding: .7rem .8rem; border-bottom: 1px solid var(--border, #d7ddd9); vertical-align: top; }
+.admin-row-actions { display: flex; align-items: center; gap: .5rem; }
+.admin-form textarea { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.admin-form fieldset { border: 1px solid var(--border, #d7ddd9); border-radius: 10px; padding: .75rem 1rem; }

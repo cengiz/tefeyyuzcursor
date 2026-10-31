@@ -1,0 +1,5 @@
+{{- /* Bilgi kutusu: {{< bilgi baslik="Biliyor muydunuz?" tur="not|uyari|ipucu" >}} ... {{< /bilgi >}} */ -}}
+<aside class="infobox infobox--{{ .Get "tur" | default "not" }}">
+  {{- with .Get "baslik" }}<strong>{{ . }}</strong>{{ end }}
+  {{ .Inner | markdownify }}
+</aside>

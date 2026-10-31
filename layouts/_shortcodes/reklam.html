@@ -1,0 +1,2 @@
+{{- /* İçerik içine manuel reklam: {{< reklam >}} veya {{< reklam slot="inArticle" >}} */ -}}
+{{ partial "ads/unit.html" (dict "ctx" .Page "slot" (.Get "slot" | default "inArticle") "class" "ad-inarticle" "format" "fluid" "layout" "in-article") }}

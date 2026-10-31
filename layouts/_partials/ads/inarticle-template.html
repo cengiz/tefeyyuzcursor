@@ -1,0 +1,16 @@
+{{- $ads := site.Params.adsense -}}
+{{- if and $ads.enabled $ads.client (ne .Params.reklam false) -}}
+<template id="inarticle-ad-tpl">
+  <div class="ad-wrap ad-inarticle">
+    <span class="ad-label">Reklam</span>
+    {{- if hugo.IsServer }}
+    <div class="ad-placeholder">AdSense · inArticle (otomatik)</div>
+    {{- else }}
+    <ins class="adsbygoogle" style="display:block; text-align:center"
+         data-ad-client="{{ $ads.client }}"
+         {{- with $ads.slots.inArticle }} data-ad-slot="{{ . }}"{{ end }}
+         data-ad-layout="in-article" data-ad-format="fluid"></ins>
+    {{- end }}
+  </div>
+</template>
+{{- end -}}

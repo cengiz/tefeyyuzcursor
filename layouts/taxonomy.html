@@ -1,0 +1,30 @@
+{{ define "bodyclass" }}layout-list page-taxonomy{{ end }}
+{{ define "main" }}
+<div class="container">
+  {{ partial "breadcrumbs.html" . }}
+  <header class="list-head">
+    <h1>{{ .Title }}</h1>
+    {{- with or .Params.description .Description }}<p class="list-desc">{{ . }}</p>{{ end }}
+    {{- with .Content }}<div class="prose list-intro">{{ . }}</div>{{ end }}
+  </header>
+
+  {{- if eq .Data.Plural "kategoriler" }}
+  <div class="grid grid-cats grid-cats--big">
+    {{- range .Data.Terms.ByCount }}
+    <a class="cat-card" href="{{ .Page.RelPermalink }}">
+      <span class="cat-icon" aria-hidden="true">{{ .Page.Params.ikon | default "📚" }}</span>
+      <span class="cat-name">{{ .Page.Title }}</span>
+      {{- with .Page.Params.description }}<span class="cat-desc">{{ . | truncate 90 "…" }}</span>{{ end }}
+      <span class="cat-count">{{ .Count }} içerik</span>
+    </a>
+    {{- end }}
+  </div>
+  {{- else }}
+  <ul class="chip-list chip-list--cloud">
+    {{- range .Data.Terms.Alphabetical }}
+    <li><a class="chip" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <small>{{ .Count }}</small></a></li>
+    {{- end }}
+  </ul>
+  {{- end }}
+</div>
+{{ end }}

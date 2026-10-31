@@ -1,0 +1,11 @@
+{{- $related := site.RegularPages.Related . | first 6 -}}
+{{- if $related }}
+<section class="related" aria-labelledby="ilgili-baslik">
+  <h2 id="ilgili-baslik" class="section-title">İlgili İçerikler</h2>
+  <div class="grid grid-3">
+    {{- range $related }}
+    {{ partial "card.html" (dict "page" . "compact" true) }}
+    {{- end }}
+  </div>
+</section>
+{{- end }}

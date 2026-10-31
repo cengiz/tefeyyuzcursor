@@ -1,0 +1,50 @@
+{{ define "bodyclass" }}layout-list section-{{ .Section }}{{ end }}
+{{ define "main" }}
+<div class="container">
+  {{ partial "breadcrumbs.html" . }}
+  <header class="list-head">
+    <h1>{{ .Title }}</h1>
+    {{- with or .Params.description .Description }}<p class="list-desc">{{ . }}</p>{{ end }}
+    {{- with .Content }}<div class="prose list-intro">{{ . }}</div>{{ end }}
+  </header>
+
+  {{ partial "ads/unit.html" (dict "ctx" . "slot" "header" "class" "ad-leaderboard" "format" "horizontal") }}
+
+  <div class="layout-with-sidebar">
+    <div class="layout-main">
+      {{- $pages := .Pages.ByDate.Reverse }}
+      {{- $pag := .Paginate $pages }}
+      {{- if eq .Section "sorular" }}
+      <ul class="qa-list qa-list--big">
+        {{- range $i, $p := $pag.Pages }}
+        <li class="qa-item">
+          <a href="{{ $p.RelPermalink }}">
+            <span class="qa-q">{{ $p.Title }}</span>
+            <span class="qa-a">{{ or $p.Params.kisaCevap ($p.Summary | plainify) | plainify | htmlUnescape | truncate 180 "…" }}</span>
+            <span class="qa-meta">
+              {{- with $p.GetTerms "kategoriler" }}{{ with index . 0 }}<span class="chip chip--sm">{{ .Title }}</span>{{ end }}{{ end }}
+              <time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date | time.Format site.Params.dateFormat }}</time>
+            </span>
+          </a>
+        </li>
+          {{- if and (eq $i 3) (gt (len $pag.Pages) 6) }}
+        <li class="qa-ad">{{ partial "ads/unit.html" (dict "ctx" $ "slot" "inFeed" "class" "ad-infeed" "format" "fluid" "layout" "in-feed") }}</li>
+          {{- end }}
+        {{- end }}
+      </ul>
+      {{- else }}
+      <div class="grid grid-2">
+        {{- range $i, $p := $pag.Pages }}
+        {{ partial "card.html" $p }}
+          {{- if and (eq $i 3) (gt (len $pag.Pages) 6) }}
+        <div class="grid-span">{{ partial "ads/unit.html" (dict "ctx" $ "slot" "inFeed" "class" "ad-infeed" "format" "fluid" "layout" "in-feed") }}</div>
+          {{- end }}
+        {{- end }}
+      </div>
+      {{- end }}
+      {{ partial "pagination.html" . }}
+    </div>
+    {{ partial "sidebar.html" . }}
+  </div>
+</div>
+{{ end }}

@@ -1,0 +1,22 @@
+{{- $g := site.Params.giscus -}}
+{{- if and $g.repo $g.repoId (ne .Params.yorumlar false) }}
+<section class="comments" aria-labelledby="yorum-baslik">
+  <h2 id="yorum-baslik" class="section-title">Yorumlar ve Katkılar</h2>
+  <p class="muted">Bu içeriğe katkıda bulunmak, düzeltme önermek veya ek bilgi paylaşmak için yorum bırakabilirsiniz.</p>
+  <script src="https://giscus.app/client.js"
+          data-repo="{{ $g.repo }}"
+          data-repo-id="{{ $g.repoId }}"
+          data-category="{{ $g.category }}"
+          data-category-id="{{ $g.categoryId }}"
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-theme="preferred_color_scheme"
+          data-lang="tr"
+          data-loading="lazy"
+          crossorigin="anonymous"
+          async></script>
+</section>
+{{- end }}

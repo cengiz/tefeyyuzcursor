@@ -1,0 +1,2 @@
+<h{{ .Level }} id="{{ .Anchor | safeURL }}" {{- with .Attributes.class }} class="{{ . }}"{{ end }}>{{ .Text }} <a class="anchor" href="#{{ .Anchor | safeURL }}" aria-label="Bu başlığa bağlantı">#</a></h{{ .Level }}>
+{{- /* */ -}}

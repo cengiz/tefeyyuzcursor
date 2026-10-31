@@ -1,0 +1,33 @@
+{{- /*
+  Kullanım: {{ partial "ads/unit.html" (dict "ctx" . "slot" "sidebar" "class" "ad-sidebar" "format" "auto" "layout" "in-article") }}
+  - slot   : hugo.toml içindeki params.adsense.slots anahtarı (header | sidebar | inArticle | inFeed | footer)
+  - format : auto | rectangle | horizontal | fluid
+  - layout : (opsiyonel) in-article | in-feed
+  Sayfa düzeyinde reklamı kapatmak için front matter: reklam: false
+*/ -}}
+{{- $ads := site.Params.adsense -}}
+{{- $ctx := .ctx -}}
+{{- $pageAllows := ne $ctx.Params.reklam false -}}
+{{- if and $ads.enabled $ads.client $pageAllows -}}
+  {{- $slotId := index $ads.slots .slot -}}
+  <div class="ad-wrap {{ .class }}" data-ad-slot-name="{{ .slot }}">
+    <span class="ad-label">Reklam</span>
+    {{- if hugo.IsServer }}
+    <div class="ad-placeholder">AdSense · {{ .slot }}{{ with $slotId }} · {{ . }}{{ end }}</div>
+    {{- else }}
+    <ins class="adsbygoogle"
+         style="display:block{{ if eq .layout "in-article" }}; text-align:center{{ end }}"
+         data-ad-client="{{ $ads.client }}"
+         {{- with $slotId }} data-ad-slot="{{ . }}"{{ end }}
+         {{- with .layout }} data-ad-layout="{{ . }}"{{ end }}
+         data-ad-format="{{ .format | default "auto" }}"
+         {{- if ne .layout "in-article" }} data-full-width-responsive="true"{{ end }}></ins>
+    <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+    {{- end }}
+  </div>
+{{- else if and $pageAllows hugo.IsServer -}}
+  <div class="ad-wrap ad-wrap--disabled {{ .class }}" data-ad-slot-name="{{ .slot }}">
+    <span class="ad-label">Reklam alanı</span>
+    <div class="ad-placeholder">{{ .slot }} · adsense.enabled = false</div>
+  </div>
+{{- end -}}

@@ -1,0 +1,15 @@
+{{- $items := slice -}}
+{{- range where site.RegularPages "Params.noindex" "!=" true -}}
+  {{- if in (slice "ansiklopedi" "sorular") .Section -}}
+    {{- $items = $items | append (dict
+        "t" .Title
+        "u" .RelPermalink
+        "k" (cond (eq .Section "sorular") "soru" "madde")
+        "d" (or .Params.kisaCevap .Params.description (.Summary | plainify) | plainify | htmlUnescape | truncate 180 "…")
+        "c" (.Plain | htmlUnescape | truncate 2500 "")
+        "kat" (.Params.kategoriler | default slice)
+        "et" (.Params.etiketler | default slice)
+        "dt" (.Date.Format "2006-01-02")) -}}
+  {{- end -}}
+{{- end -}}
+{{- $items | jsonify -}}

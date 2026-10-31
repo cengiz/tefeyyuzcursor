@@ -1,0 +1,28 @@
+{{ define "bodyclass" }}layout-list page-term{{ end }}
+{{ define "main" }}
+<div class="container">
+  {{ partial "breadcrumbs.html" . }}
+  <header class="list-head">
+    <p class="list-kicker">{{ if eq .Data.Plural "kategoriler" }}Kategori{{ else }}Etiket{{ end }}</p>
+    <h1>{{ with .Params.ikon }}<span aria-hidden="true">{{ . }}</span> {{ end }}{{ .Title }}</h1>
+    {{- with or .Params.description .Description }}<p class="list-desc">{{ . }}</p>{{ end }}
+    {{- with .Content }}<div class="prose list-intro">{{ . }}</div>{{ end }}
+    <p class="muted">{{ len .Pages }} içerik</p>
+  </header>
+
+  {{ partial "ads/unit.html" (dict "ctx" . "slot" "header" "class" "ad-leaderboard" "format" "horizontal") }}
+
+  <div class="layout-with-sidebar">
+    <div class="layout-main">
+      {{- $pag := .Paginate .Pages.ByDate.Reverse }}
+      <div class="grid grid-2">
+        {{- range $pag.Pages }}
+        {{ partial "card.html" . }}
+        {{- end }}
+      </div>
+      {{ partial "pagination.html" . }}
+    </div>
+    {{ partial "sidebar.html" . }}
+  </div>
+</div>
+{{ end }}

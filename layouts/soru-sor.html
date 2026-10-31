@@ -1,0 +1,61 @@
+{{ define "bodyclass" }}page-single page-soru-sor{{ end }}
+{{ define "main" }}
+{{- $form := site.Params.form }}
+<div class="container container--narrow">
+  {{ partial "breadcrumbs.html" . }}
+  <article class="article">
+    <header class="article-head">
+      <h1 class="article-title">{{ .Title }}</h1>
+      {{- with .Params.description }}<p class="article-lead">{{ . }}</p>{{ end }}
+    </header>
+    <div class="prose">{{ .Content }}</div>
+
+    {{- if or (and (eq $form.provider "formspree") $form.endpoint) (eq $form.provider "netlify") }}
+    <form class="ask-form" id="soru-formu"
+          method="POST"
+          {{ if eq $form.provider "formspree" }}action="{{ $form.endpoint }}"{{ else }}name="soru" data-netlify="true" netlify-honeypot="website"{{ end }}>
+      {{- if eq $form.provider "netlify" }}<input type="hidden" name="form-name" value="soru">{{ end }}
+      <p class="hp"><label>Web siteniz <input type="text" name="website" tabindex="-1" autocomplete="off"></label></p>
+      <div class="field">
+        <label for="soru-baslik">Sorunuz <span class="req">*</span></label>
+        <input id="soru-baslik" name="soru" type="text" maxlength="200" required placeholder="Örn. Tefeyyüz kelimesinin kökeni nedir?">
+      </div>
+      <div class="field">
+        <label for="soru-detay">Ayrıntı</label>
+        <textarea id="soru-detay" name="detay" rows="6" placeholder="Sorunuzu biraz daha açıklayabilirsiniz (isteğe bağlı)."></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="soru-kategori">Kategori</label>
+          <select id="soru-kategori" name="kategori">
+            <option value="">Seçiniz</option>
+            {{- range site.Taxonomies.kategoriler.Alphabetical }}
+            <option value="{{ .Page.Title }}">{{ .Page.Title }}</option>
+            {{- end }}
+            <option value="Diğer">Diğer</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="soru-eposta">E-posta (cevap yayınlanınca haber verelim)</label>
+          <input id="soru-eposta" name="email" type="email" placeholder="ornek@eposta.com">
+        </div>
+      </div>
+      <div class="field">
+        <label for="soru-ad">Görünecek adınız</label>
+        <input id="soru-ad" name="ad" type="text" maxlength="60" placeholder="Takma ad kullanabilirsiniz">
+      </div>
+      <label class="check">
+        <input type="checkbox" name="kvkk" required>
+        <span><a href="/gizlilik-politikasi/">Gizlilik Politikası</a>'nı okudum, sorumun düzenlenerek sitede yayınlanabileceğini kabul ediyorum.</span>
+      </label>
+      <button class="btn btn-primary" type="submit">Soruyu Gönder</button>
+    </form>
+    {{- else }}
+    <div class="infobox">
+      <strong>Form henüz yapılandırılmadı.</strong>
+      <p><code>hugo.toml</code> içindeki <code>params.form</code> bölümüne Formspree uç noktanızı girin ya da Netlify Forms kullanın. Bu arada sorularınızı <a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a> adresine iletebilirsiniz.</p>
+    </div>
+    {{- end }}
+  </article>
+</div>
+{{ end }}

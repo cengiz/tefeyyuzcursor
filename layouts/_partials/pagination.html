@@ -1,0 +1,26 @@
+{{- $pag := .Paginator -}}
+{{- if gt $pag.TotalPages 1 }}
+<nav class="pagination" aria-label="Sayfalama">
+  {{- if $pag.HasPrev }}
+  <a class="page-btn" href="{{ $pag.Prev.URL }}" rel="prev">‹ Önceki</a>
+  {{- else }}
+  <span class="page-btn is-disabled">‹ Önceki</span>
+  {{- end }}
+  <ul class="page-list">
+    {{- $cur := $pag.PageNumber }}
+    {{- range $pag.Pagers }}
+      {{- $n := .PageNumber }}
+      {{- if or (le $n 2) (ge $n (sub $pag.TotalPages 1)) (and (ge $n (sub $cur 1)) (le $n (add $cur 1))) }}
+    <li><a href="{{ .URL }}" {{ if eq $n $cur }}class="is-current" aria-current="page"{{ end }}>{{ $n }}</a></li>
+      {{- else if or (eq $n (sub $cur 2)) (eq $n (add $cur 2)) }}
+    <li><span class="ellipsis">…</span></li>
+      {{- end }}
+    {{- end }}
+  </ul>
+  {{- if $pag.HasNext }}
+  <a class="page-btn" href="{{ $pag.Next.URL }}" rel="next">Sonraki ›</a>
+  {{- else }}
+  <span class="page-btn is-disabled">Sonraki ›</span>
+  {{- end }}
+</nav>
+{{- end }}

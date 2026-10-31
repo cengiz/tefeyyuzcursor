@@ -1,0 +1,11 @@
+<nav class="breadcrumbs" aria-label="Sayfa yolu">
+  <ol>
+    <li><a href="/">Ana Sayfa</a></li>
+    {{- range .Ancestors.Reverse }}
+      {{- if not .IsHome }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    {{- end }}
+    <li aria-current="page"><span>{{ .Title | truncate 60 "…" }}</span></li>
+  </ol>
+</nav>
